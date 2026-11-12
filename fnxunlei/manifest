@@ -1,0 +1,16 @@
+appname               = fnxunlei
+version               = 2.0
+display_name          = 迅雷推送
+desc                  = 迅雷远程通道：登录迅雷账号，把磁力 / thunder / 直链任务推送到账号绑定的远程下载设备（P2SP 加速）。
+platform              = all
+source                = thirdparty
+maintainer            = 大哲
+maintainer_url        = https://zhebk.cn/
+distributor           = 大哲
+distributor_url       = https://github.com/Zisbusy/fnxunlei
+os_min_version        = 1.2.0
+desktop_uidir         = ui
+desktop_applaunchname = fnxunlei.main
+checkport             = false
+ctl_stop              = true
+changelog             = 全新 2.0 应用「迅雷推送」
