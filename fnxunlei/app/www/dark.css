@@ -1,0 +1,136 @@
+/* ==========================================================================
+ * fnxunlei 深色模式
+ * 主题由 index.html 的脚本写入 body[theme-mode="dark"]（跟随飞牛主题设置）。
+ * ========================================================================== */
+
+body[theme-mode="dark"] #app,
+body[theme-mode="dark"] .sidebar,
+body[theme-mode="dark"] .result-item,
+body[theme-mode="dark"] .field input,
+body[theme-mode="dark"] .field select,
+body[theme-mode="dark"] .input-area,
+body[theme-mode="dark"] .sms-input {
+  background: #0c0c0d;
+}
+
+body[theme-mode="dark"] .sidebar {
+  border-bottom: 1px solid #ffffff0f;
+}
+
+body[theme-mode="dark"] .nav button {
+  color: #f2f3f4cc;
+}
+
+body[theme-mode="dark"] .nav button.active {
+  background-color: #1f2021;
+  color: #0066ff;
+}
+
+body[theme-mode="dark"] .nav button:hover,
+body[theme-mode="dark"] .main,
+body[theme-mode="dark"] .card,
+body[theme-mode="dark"] .toast,
+body[theme-mode="dark"] .modal-content,
+body[theme-mode="dark"] .ghost-btn,
+body[theme-mode="dark"] .eye-btn:hover {
+  background-color: #1f2021;
+}
+
+body[theme-mode="dark"] .page-head h1,
+body[theme-mode="dark"] .section-head h2,
+body[theme-mode="dark"] .result-name,
+body[theme-mode="dark"] .field input,
+body[theme-mode="dark"] .field select,
+body[theme-mode="dark"] .input-area,
+body[theme-mode="dark"] .sms-input,
+body[theme-mode="dark"] .modal-content h2,
+body[theme-mode="dark"] .toast,
+body[theme-mode="dark"] #modalBody {
+  color: #ffffff;
+}
+
+body[theme-mode="dark"] .page-sub,
+body[theme-mode="dark"] .card-label,
+body[theme-mode="dark"] .result-meta,
+body[theme-mode="dark"] .field,
+body[theme-mode="dark"] .field-hint,
+body[theme-mode="dark"] .modal-tip,
+body[theme-mode="dark"] .form-state,
+body[theme-mode="dark"] .nav-note,
+body[theme-mode="dark"] .ghost-btn {
+  color: #f2f3f4b3;
+}
+
+body[theme-mode="dark"] .card,
+body[theme-mode="dark"] .result-item,
+body[theme-mode="dark"] .modal-content,
+body[theme-mode="dark"] .toast,
+body[theme-mode="dark"] .ghost-btn {
+  border-color: #ffffff29;
+}
+
+body[theme-mode="dark"] .field input,
+body[theme-mode="dark"] .field select,
+body[theme-mode="dark"] .input-area,
+body[theme-mode="dark"] .sms-input {
+  border: 1px solid #ffffff29;
+}
+
+body[theme-mode="dark"] .form-actions {
+  border-top-color: #ffffff14;
+}
+
+body[theme-mode="dark"] .badge-ok {
+  background: rgba(25, 165, 101, 0.18);
+  color: #3fce8b;
+}
+
+body[theme-mode="dark"] .badge-warn {
+  background: rgba(230, 162, 60, 0.18);
+  color: #e2a23c;
+}
+
+body[theme-mode="dark"] .badge-waiting {
+  background: #2b2b2d;
+  color: #b9b9bf;
+}
+
+body[theme-mode="dark"] .banner {
+  border-color: #ffffff29;
+  background: #0c0c0d;
+  color: #f2f3f4cc;
+}
+
+body[theme-mode="dark"] .banner.warn {
+  border-color: rgba(230, 162, 60, 0.4);
+  background: rgba(230, 162, 60, 0.1);
+  color: #e2a23c;
+}
+
+body[theme-mode="dark"] .ok {
+  color: #19a565 !important;
+}
+
+body[theme-mode="dark"] .bad,
+body[theme-mode="dark"] .result-meta.bad {
+  color: #ff8080 !important;
+}
+
+@media (max-width: 860px) {
+  body[theme-mode="dark"] .sidebar,
+  body[theme-mode="dark"] .main {
+    background: #1e1e20;
+  }
+
+  body[theme-mode="dark"] .nav button.active {
+    background-color: #2b2b2d;
+    color: #fff;
+    border: 1px solid #575659;
+  }
+
+  body[theme-mode="dark"] .field input,
+  body[theme-mode="dark"] .field select,
+  body[theme-mode="dark"] .input-area {
+    background: #2b2b2d;
+  }
+}
