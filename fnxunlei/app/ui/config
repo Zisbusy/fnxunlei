@@ -1,0 +1,20 @@
+{
+    ".url": {
+        "fnxunlei.main": {
+            "title": "迅雷推送",
+            "desc": "迅雷远程通道 / 链接推送 / 下载位置",
+            "icon": "images/icon_{0}.png",
+            "type": "iframe",
+            "url": "/app/fnxunlei",
+            "allUsers": false,
+            "gatewaySocket": "fnxunlei.sock",
+            "gatewayPrefix": "/app/fnxunlei",
+            "control": {
+                "accessPerm": "readonly",
+                "portPerm": "hidden",
+                "pathPerm": "hidden",
+                "fullUrlPerm": "hidden"
+            }
+        }
+    }
+}
