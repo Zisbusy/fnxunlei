@@ -1,0 +1,24 @@
+[
+  {
+    "stepTitle": "确认卸载",
+    "items": [
+      {
+        "type": "tips",
+        "helpText": "您即将卸载<b>迅雷远程下载</b>。卸载不会影响你已经下载到迅雷远程设备上的文件。"
+      },
+      {
+        "type": "radio",
+        "field": "wizard_clean_data",
+        "label": "是否同时删除本机保存的迅雷账号配置与任务记录？",
+        "initValue": "no",
+        "options": [
+          { "label": "保留配置，仅卸载应用（下次安装可直接继续使用）", "value": "no" },
+          { "label": "删除全部数据（账号、设备、任务记录），此操作不可恢复", "value": "yes" }
+        ],
+        "rules": [
+          { "required": true, "message": "请选择是否删除配置数据" }
+        ]
+      }
+    ]
+  }
+]
