@@ -1,0 +1,23 @@
+#!/bin/bash
+# 安装完成：准备数据目录并启动服务。
+
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "${SELF_DIR}/_common"
+
+mkdir -p "${PKG_VAR}" 2>/dev/null || true
+chmod 700 "${PKG_VAR}" 2>/dev/null || true
+
+# 首次安装生成默认配置（只有空占位，不含任何凭据）
+if [ ! -f "${PKG_VAR}/config.json" ]; then
+  "${PYTHON_BIN}" -c "
+import sys
+sys.path.insert(0, '${PKG_DEST}/server')
+import paths, store
+paths.configure('${PKG_VAR}')
+store.ensure_config()
+" >>"${LOG_FILE}" 2>&1 || true
+fi
+
+start_service >>"${LOG_FILE}" 2>&1 || xunlei_fail "应用已安装，但服务未能启动。请检查 ${LOG_FILE}，或在应用中心手动启动本应用"
+
+exit 0

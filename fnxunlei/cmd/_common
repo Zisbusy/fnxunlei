@@ -1,0 +1,116 @@
+#!/bin/bash
+# fnxunlei 生命周期脚本公共定义（被 source）。
+# 所有路径都从 TRIM_* 环境变量推导，不硬编码安装卷。
+
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+APP_ROOT="$(cd "${SELF_DIR}/.." && pwd)"
+
+# 应用文件目录（target）与运行数据目录（var）
+PKG_DEST="${TRIM_APPDEST:-${APP_ROOT}}"
+PKG_VAR="${TRIM_PKGVAR:-${APP_ROOT}/var}"
+
+LOG_FILE="${PKG_VAR}/info.log"
+PID_FILE="${PKG_VAR}/app.pid"
+SOCKET_PATH="${PKG_DEST}/fnxunlei.sock"
+BASE_PATH="/app/fnxunlei"
+PYTHON_BIN="${PYTHON_BIN:-python3}"
+
+# 用户可见的失败信息先写 TRIM_TEMP_LOGFILE，再以非零状态退出（只在顶层调用）。
+xunlei_fail() {
+  if [ -n "${TRIM_TEMP_LOGFILE:-}" ]; then
+    printf '%s\n' "$1" >"${TRIM_TEMP_LOGFILE}" 2>/dev/null || true
+  fi
+  echo "[fnxunlei] $1" >&2
+  exit 1
+}
+
+log_msg() {
+  mkdir -p "${PKG_VAR}" 2>/dev/null || true
+  echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >>"${LOG_FILE}" 2>/dev/null || true
+}
+
+check_process() {
+  [ -n "$1" ] && kill -0 "$1" 2>/dev/null
+}
+
+# 启动服务：以 Unix Socket 方式监听（由 fnOS 统一网关转发 /app/fnxunlei）。
+# 成功返回 0；失败返回 1（错误细节在日志与 stderr），由调用方决定如何上报。
+# -B：不写 .pyc，避免往应用目录（target）里落编译缓存。
+start_service() {
+  if service_status; then
+    return 0
+  fi
+  if ! command -v "${PYTHON_BIN}" >/dev/null 2>&1; then
+    echo "[fnxunlei] 系统缺少 python3，无法启动服务" >&2
+    return 1
+  fi
+
+  mkdir -p "${PKG_VAR}" 2>/dev/null || true
+  rm -f "${SOCKET_PATH}" 2>/dev/null || true
+  log_msg "starting service"
+
+  if command -v setsid >/dev/null 2>&1; then
+    setsid "${PYTHON_BIN}" -B "${PKG_DEST}/server/main.py" \
+      --unix-socket "${SOCKET_PATH}" \
+      --base-path "${BASE_PATH}" \
+      --www-root "${PKG_DEST}/www" \
+      --data-dir "${PKG_VAR}" \
+      --run-user "${TRIM_USERNAME:-${TRIM_RUN_USERNAME:-}}" \
+      --run-group "${TRIM_GROUPNAME:-${TRIM_RUN_GROUPNAME:-}}" >>"${LOG_FILE}" 2>&1 &
+  else
+    nohup "${PYTHON_BIN}" -B "${PKG_DEST}/server/main.py" \
+      --unix-socket "${SOCKET_PATH}" \
+      --base-path "${BASE_PATH}" \
+      --www-root "${PKG_DEST}/www" \
+      --data-dir "${PKG_VAR}" \
+      --run-user "${TRIM_USERNAME:-${TRIM_RUN_USERNAME:-}}" \
+      --run-group "${TRIM_GROUPNAME:-${TRIM_RUN_GROUPNAME:-}}" >>"${LOG_FILE}" 2>&1 &
+  fi
+  echo "$!" >"${PID_FILE}" 2>/dev/null || true
+
+  # 等 Socket 就绪（最多 10s）。只认 Socket 文件，不靠 PID 存活判断——
+  # setsid 在个别实现里会 fork，$! 可能是已经退出的父进程。
+  i=0
+  while [ "${i}" -lt 50 ]; do
+    if [ -S "${SOCKET_PATH}" ]; then
+      log_msg "service ready"
+      return 0
+    fi
+    sleep 0.2
+    i=$((i + 1))
+  done
+
+  log_msg "service failed to start"
+  tail -n 12 "${LOG_FILE}" 2>/dev/null || true
+  return 1
+}
+
+stop_service() {
+  log_msg "stopping service"
+  if [ -r "${PID_FILE}" ]; then
+    pid="$(head -n 1 "${PID_FILE}" | tr -d '[:space:]')"
+    if check_process "${pid}"; then
+      kill -TERM "${pid}" 2>/dev/null || true
+      n=0
+      while check_process "${pid}" && [ "${n}" -lt 30 ]; do
+        sleep 0.5
+        n=$((n + 1))
+      done
+      if check_process "${pid}"; then
+        kill -KILL "${pid}" 2>/dev/null || true
+      fi
+    fi
+  fi
+  rm -f "${PID_FILE}" "${SOCKET_PATH}" 2>/dev/null || true
+}
+
+service_status() {
+  if [ -r "${PID_FILE}" ]; then
+    pid="$(head -n 1 "${PID_FILE}" | tr -d '[:space:]')"
+    if [ -n "${pid}" ] && check_process "${pid}"; then
+      return 0
+    fi
+    rm -f "${PID_FILE}" "${SOCKET_PATH}" 2>/dev/null || true
+  fi
+  return 1
+}

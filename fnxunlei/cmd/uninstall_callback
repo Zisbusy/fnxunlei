@@ -1,0 +1,19 @@
+#!/bin/bash
+# 卸载后：按卸载向导的选择决定是否删除配置与任务记录。
+# wizard_clean_data: "yes" 删除全部数据；其他（默认）保留。
+
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "${SELF_DIR}/_common"
+
+CLEAN="$(printf '%s' "${wizard_clean_data:-no}" | tr -d '[]"[:space:]' | tr 'A-Z' 'a-z')"
+case "${CLEAN}" in
+  yes | true | 1 | on)
+    log_msg "uninstall: 用户选择删除全部数据"
+    rm -rf "${PKG_VAR}" 2>/dev/null || true
+    ;;
+  *)
+    log_msg "uninstall: 保留配置与任务记录（${PKG_VAR}）"
+    ;;
+esac
+
+exit 0

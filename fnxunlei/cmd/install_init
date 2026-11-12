@@ -1,0 +1,10 @@
+#!/bin/bash
+# 安装前检查：只需要 python3，其余依赖全部为 Python 标准库（无需联网装包）。
+
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "${SELF_DIR}/_common"
+
+command -v "${PYTHON_BIN}" >/dev/null 2>&1 \
+  || xunlei_fail "系统缺少 python3，本应用需要 python3 运行环境"
+
+exit 0

@@ -1,0 +1,9 @@
+#!/bin/bash
+# 卸载前：停止服务并清理 Socket。
+
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "${SELF_DIR}/_common"
+
+stop_service
+rm -f "${SOCKET_PATH}" 2>/dev/null || true
+exit 0

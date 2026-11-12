@@ -1,0 +1,23 @@
+#!/bin/bash
+# 升级后：仅在数据缺失时回填备份（TRIM_PKGVAR 通常会被系统保留），再启动服务。
+
+set -uo pipefail
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "${SELF_DIR}/_common"
+
+BACKUP_DIR="${TRIM_TEMP_UPGRADE_FOLDER:-${TRIM_PKGTMP:-/tmp}}/fnxunlei-upgrade-backup"
+mkdir -p "${PKG_VAR}" 2>/dev/null || true
+
+for f in config.json tasks.json; do
+  if [ ! -f "${PKG_VAR}/${f}" ] && [ -f "${BACKUP_DIR}/${f}" ]; then
+    cp -f "${BACKUP_DIR}/${f}" "${PKG_VAR}/${f}" 2>/dev/null || true
+    chmod 600 "${PKG_VAR}/${f}" 2>/dev/null || true
+  fi
+done
+
+chmod 700 "${PKG_VAR}" 2>/dev/null || true
+rm -rf "${BACKUP_DIR}" 2>/dev/null || true
+
+start_service >>"${LOG_FILE}" 2>&1 || xunlei_fail "升级完成，但服务未能启动。请检查 ${LOG_FILE}，或在应用中心手动启动本应用"
+
+exit 0

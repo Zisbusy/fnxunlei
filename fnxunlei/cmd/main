@@ -1,0 +1,24 @@
+#!/bin/bash
+# fnxunlei 应用中心 start / stop / status。
+# 服务以 Unix Socket 监听 ${TRIM_APPDEST}/fnxunlei.sock，
+# 由 fnOS 统一网关把 /app/fnxunlei 转发过来，不占用任何 TCP 端口。
+
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "${SELF_DIR}/_common"
+
+case "${1:-}" in
+  start)
+    start_service
+    exit 0
+    ;;
+  stop)
+    stop_service
+    exit 0
+    ;;
+  status)
+    service_status && exit 0 || exit 3
+    ;;
+  *)
+    exit 1
+    ;;
+esac

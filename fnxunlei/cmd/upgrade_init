@@ -1,0 +1,21 @@
+#!/bin/bash
+# 升级前：停服务并备份运行数据（配置 + 任务记录），失败可回滚。
+
+set -uo pipefail
+SELF_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "${SELF_DIR}/_common"
+
+stop_service
+
+BACKUP_DIR="${TRIM_TEMP_UPGRADE_FOLDER:-${TRIM_PKGTMP:-/tmp}}/fnxunlei-upgrade-backup"
+rm -rf "${BACKUP_DIR}" 2>/dev/null || true
+mkdir -p "${BACKUP_DIR}" 2>/dev/null || true
+
+for f in config.json tasks.json; do
+  if [ -f "${PKG_VAR}/${f}" ]; then
+    cp -f "${PKG_VAR}/${f}" "${BACKUP_DIR}/${f}" 2>/dev/null || true
+  fi
+done
+
+log_msg "upgrade_init: backup to ${BACKUP_DIR}"
+exit 0
